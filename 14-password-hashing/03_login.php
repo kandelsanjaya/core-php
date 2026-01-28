@@ -22,8 +22,6 @@ $error = '';
 if (isset($_GET['logout'])) {
     $_SESSION = [];
     session_destroy();
-    header('Location: ' . url('03_login.php'));
-    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -47,8 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'username' => $foundUser['username'],
             'email' => $foundUser['email'],
         ];
-        header('Location: ' . url('03_login.php'));
-        exit;
     } else {
         $error = "Invalid username or password";
     }

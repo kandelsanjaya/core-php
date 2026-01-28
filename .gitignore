@@ -1,0 +1,10 @@
+# OS files
+.DS_Store
+
+# Upload files (user generated content)
+12-file-upload/uploads/*
+!12-file-upload/uploads/.gitkeep
+
+# 15-login-system (keep only README)
+15-login-system/*
+!15-login-system/README.md
