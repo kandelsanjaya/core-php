@@ -1,16 +1,8 @@
 [
     {
         "id": 1,
-        "username": "kirangautam45",
-        "email": "kirangautam225@gmail.com",
-        "password": "$2y$12$a6cJU.ff6rPomBa7imT42OU12FmC5wUgObxTq\/dIL0xFzoHN77wM.",
-        "created_at": "2026-01-25 09:05:15",
-        "last_login": "2026-01-25 09:11:31"
-    },
-    {
-        "id": 2,
-        "username": "admin",
-        "email": "kirangautam@gmail.com",
-        "password": "$2y$12$Agb4atnDFl40lGucPE1SKOBoDI0XJGNgFwuCfLAnddQdJlOAzosWe"
+        "username": "test",
+        "email": "test@gmail.com",
+        "password": "$2y$12$eBhyCA8aJp6lWMkf.fXg3ejOD2RQOV7s5O18kxhcm84EhPe4ZMR1e"
     }
 ]

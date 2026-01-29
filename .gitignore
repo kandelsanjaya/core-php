@@ -6,5 +6,5 @@
 !12-file-upload/uploads/.gitkeep
 
 # 15-login-system (keep only README)
-15-login-system/*
+test-user-profile/*
 !15-login-system/README.md
