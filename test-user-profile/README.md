@@ -25,12 +25,36 @@ Create these files:
 test-user-profile/
 ├── uploads/            # Profile pictures (create this folder)
 ├── users.json          # User data storage
+├── index.php           # Entry point (redirects based on login status)
 ├── register.php        # Registration with profile picture
 ├── login.php           # Login page
 ├── profile.php         # View/edit profile (protected)
 ├── change-password.php # Change password (protected)
 └── logout.php          # Destroy session
 ```
+
+---
+
+## Entry Point: `index.php`
+
+The entry point for the application. It checks session status and redirects accordingly:
+
+```php
+<?php
+session_start();
+
+// If logged in, redirect to profile
+if (isset($_SESSION['user'])) {
+    header('Location: profile.php');
+    exit;
+}
+
+// If not logged in, redirect to login
+header('Location: login.php');
+exit;
+```
+
+This allows users to visit the root URL and be automatically directed to the appropriate page.
 
 ---
 
@@ -47,6 +71,7 @@ Example structure:
 {
     "admin": {
         "password": "$2y$12$hashedPasswordHere...",
+        "email": "admin@example.com",
         "profile_pic": "admin_1234567890.jpg",
         "created_at": "2024-01-29"
     }
@@ -80,6 +105,7 @@ Example structure:
 ### HTML Form:
 
 - Username input (text, required)
+- Email input (email, required)
 - Password input (password, required)
 - Confirm Password input (password, required)
 - Profile Picture input (file, optional)
@@ -108,6 +134,7 @@ Example structure:
 
 - Username input (text, required)
 - Password input (password, required)
+- Remember Me checkbox (optional)
 - Submit button
 - Link to register page
 
@@ -178,6 +205,7 @@ Example structure:
 | Field | Rules |
 |-------|-------|
 | Username | Required, unique, no spaces |
+| Email | Required, valid format, unique |
 | Password | Required, min 6 characters |
 | Confirm Password | Must match password |
 | Profile Picture | Optional, jpg/jpeg/png/gif only, max 2MB |
@@ -231,17 +259,23 @@ move_uploaded_file($_FILES['profile_pic']['tmp_name'], 'uploads/' . $filename);
 - [ ] Can register new user without profile picture
 - [ ] Can register new user with profile picture
 - [ ] Cannot register with existing username
+- [ ] Cannot register with existing email
+- [ ] Cannot register with invalid email format
 - [ ] Cannot register with mismatched passwords
 - [ ] Cannot register with password less than 6 chars
 - [ ] Cannot upload non-image files
 - [ ] Cannot upload files larger than 2MB
 - [ ] Can login with correct credentials
 - [ ] Cannot login with wrong password
-- [ ] Profile page shows user info and picture
+- [ ] Remember Me keeps user logged in after closing browser
+- [ ] Profile page shows user info, email, and picture
+- [ ] Can update profile picture from profile page
+- [ ] Old profile picture is deleted when uploading new one
 - [ ] Cannot access profile.php without login
 - [ ] Can change password with correct current password
 - [ ] Cannot change password with wrong current password
-- [ ] Logout clears session and redirects to login
+- [ ] Logout clears session, cookie, and redirects to login
+- [ ] Flash messages display for success/error actions
 
 ---
 
@@ -252,16 +286,18 @@ cd test-user-profile
 php -S localhost:8080
 ```
 
-Open browser: http://localhost:8080/register.php
+Open browser: http://localhost:8080 (redirects to login or profile based on session)
 
 ---
 
-## Bonus Challenges (Optional)
+## Bonus Challenges (Implemented)
 
-1. Add ability to update profile picture from profile page
-2. Add "Remember Me" checkbox using cookies
-3. Add email field to registration
-4. Delete old profile picture when uploading new one
-5. Add flash messages for success/error notifications
+All bonus features have been implemented:
+
+1. **Update profile picture from profile page** - Form on profile.php to upload new picture
+2. **"Remember Me" checkbox** - Uses secure token stored in cookie (30 days) and users.json
+3. **Email field in registration** - Required field with validation and uniqueness check
+4. **Delete old profile picture** - Old file is deleted when uploading a new one
+5. **Flash messages** - Session-based success/error notifications across pages
 
 Good luck!
