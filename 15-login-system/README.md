@@ -1,8 +1,8 @@
-# Day 15: Simple Login System (JSON File)
+# Day 15: Login System with Registration & Password Hashing
 
 ## What We'll Build
 
-A simple login system using PHP sessions with users stored in a JSON file.
+A login and registration system using PHP sessions with secure password hashing. Users are stored in a JSON file with hashed passwords.
 
 ## Prerequisites
 
@@ -10,13 +10,15 @@ Review these lessons before starting:
 
 - [11-file-handling](../11-file-handling/) - `file_get_contents()`, JSON
 - [13-sessions-cookies](../13-sessions-cookies/) - Sessions basics
+- [14-password-hashing](../14-password-hashing/) - `password_hash()`, `password_verify()`
 - [08-forms](../08-forms/) - Form handling with `$_POST`
 
 ## Project Structure
 
 ```
 15-login-system/
-├── users.json          # Create this file
+├── users.json          # User credentials (hashed passwords)
+├── register.php        # Registration form
 ├── login.php           # Login form and logic
 ├── index.php           # Home page (shows login status)
 └── logout.php          # Destroy session
@@ -26,15 +28,51 @@ Review these lessons before starting:
 
 ## Step 1: Create `users.json`
 
-Create a JSON file with username as key and password as value.
+Create a JSON file with username as key and **hashed password** as value.
 
-Add 3 users: admin, kiran, student
+```json
+{
+    "admin": "$2y$12$hashedPasswordHere..."
+}
+```
 
-**Hint:** See `users.sample.json` for format reference.
+**Note:** Never store plaintext passwords! Use `password_hash()` to generate hashes.
 
 ---
 
-## Step 2: Create `login.php`
+## Step 2: Create `register.php`
+
+This file handles new user registration with password hashing.
+
+### PHP Logic (before HTML):
+
+1. Start the session
+2. Initialize `$error = ''` and `$success = ''`
+3. Check if form is submitted using `$_SERVER['REQUEST_METHOD'] === 'POST'`
+4. Get username, password, and confirm password from `$_POST`
+5. Validate:
+   - Username and password are not empty
+   - Passwords match
+   - Password is at least 6 characters
+6. Read existing users from `users.json`
+7. Check if username already exists
+8. Hash the password using `password_hash($password, PASSWORD_DEFAULT)`
+9. Add new user to array and save to `users.json`
+10. Show success message
+
+### HTML:
+
+1. Show error/success messages
+2. Create a form with `method="POST"`
+3. Add username input
+4. Add password input
+5. Add confirm password input
+6. Add submit button
+7. Add link to login page
+
+---
+
+## Step 3: Create `login.php`
 
 This file handles the login form and authentication.
 
@@ -44,9 +82,9 @@ This file handles the login form and authentication.
 2. Read `users.json` using `file_get_contents()`
 3. Convert JSON to array using `json_decode($json, true)`
 4. Initialize `$error = ''`
-5. Check if form is submitted using `$_SERVER['REQUEST_METHOD'] === 'POST'`
+5. Check if form is submitted
 6. Get username and password from `$_POST`
-7. Check if user exists and password matches
+7. Check if user exists and verify password using `password_verify($password, $hash)`
 8. If valid: store username in `$_SESSION['user']` and redirect to `index.php`
 9. If invalid: set error message
 
@@ -57,11 +95,11 @@ This file handles the login form and authentication.
 3. Add username input (type="text")
 4. Add password input (type="password")
 5. Add submit button
-6. Add link back to home
+6. Add links to register and home pages
 
 ---
 
-## Step 3: Create `index.php`
+## Step 4: Create `index.php`
 
 The home page that shows different content based on login status.
 
@@ -73,11 +111,11 @@ The home page that shows different content based on login status.
 ### HTML:
 
 1. If logged in: show welcome message with username and logout link
-2. If not logged in: show message and login link
+2. If not logged in: show message with login and register links
 
 ---
 
-## Step 4: Create `logout.php`
+## Step 5: Create `logout.php`
 
 Simple file to destroy the session (no HTML needed).
 
@@ -107,17 +145,23 @@ Open browser: http://localhost:8015
 
 ## Key Functions Reference
 
-| Function                   | Purpose                  |
-| -------------------------- | ------------------------ |
-| `session_start()`          | Start/resume session     |
-| `file_get_contents()`      | Read file as string      |
-| `json_decode($json, true)` | Convert JSON to array    |
-| `$_SESSION['key']`         | Store/read session data  |
-| `header('Location: url')`  | Redirect to another page |
-| `session_destroy()`        | End the session          |
+| Function                              | Purpose                           |
+| ------------------------------------- | --------------------------------- |
+| `session_start()`                     | Start/resume session              |
+| `file_get_contents()`                 | Read file as string               |
+| `file_put_contents()`                 | Write string to file              |
+| `json_decode($json, true)`            | Convert JSON to array             |
+| `json_encode($arr, JSON_PRETTY_PRINT)`| Convert array to JSON             |
+| `password_hash($pw, PASSWORD_DEFAULT)`| Hash a password securely          |
+| `password_verify($pw, $hash)`         | Verify password against hash      |
+| `$_SESSION['key']`                    | Store/read session data           |
+| `header('Location: url')`             | Redirect to another page          |
+| `session_destroy()`                   | End the session                   |
 
 ## Important Rules
 
 1. `session_start()` must be called before ANY HTML
 2. `header()` must be called before any output
 3. Always use `exit` after redirect
+4. Never store plaintext passwords - always use `password_hash()`
+5. Always verify passwords using `password_verify()`, never compare directly
